@@ -1,23 +1,22 @@
-/**
- * READ THIS
- * http://krasimirtsonev.com/blog/article/javascript-library-starter-using-webpack-es6
- *
- * EXAMPLE
- * https://github.com/MikeRyan52/angular-decorators
- */
-
 var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
-    // devtool : 'source-map',
-    entry: './src/index.js',
+    entry: path.join(__dirname, 'src', 'index.js'),
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, 'lib'),
         filename: 'index.js',
-        library: 'ng-decorators',
+        library: 'ng-decorated',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
+    plugins: [
+        // new webpack.optimize.UglifyJsPlugin({
+        //     output: {
+        //         comments: false
+        //     }
+        // })
+    ],
     module: {
         loaders: [
             {
