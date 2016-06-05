@@ -1,5 +1,5 @@
 # ng-decorated
-Set of ES6 class decorators for Angular 1.5 for creating Services, Components, Directives and Inject depencencies.
+Set of ES6 decorators to write Angular 2 style code in AngularJS 1.5. 
 
 
 [![NPM](https://nodei.co/npm/ng-decorated.png)](https://nodei.co/npm/ng-decorated/)
@@ -12,10 +12,14 @@ Set of ES6 class decorators for Angular 1.5 for creating Services, Components, D
   * [`@Component`](#component)
   * [`@RouteConfig`](#routeconfig)
   * [`@Directive`](#directive)
+     * [`@Input`](#input)
+     * [`@Output`](#output)
+     * [`@HostListener`](#hostlistener)
   * [`@Service`](#service)
   * [`@Inject`](#inject)
   * [`@Config`](#config)
   * [`@Run`](#run)
+  * [`@Pipe`](#pipe)
 
 ## Installation
 ```
@@ -47,20 +51,22 @@ Usage:
 import { Component } from 'ng-decorated';
 
 @Component({
-	selector: 'myTest',
-	template: '<h1>Hello World!</h1>'
+  selector: 'myTest',
+  template: '<h1>Hello World!</h1>'
 })
 class MyTestComponent { }
 ```
 
 #### Component Options
+> See [Angular docs for Component](https://docs.angularjs.org/guide/component) for a full list of options.
 
-Option  | Description
---------|------------
-selector | **(Required)** This is the selector string for the resulting component.
-template | **(Optional)** Defines a template string for the component.
+--- 
 
-See [Angular docs for Component](https://docs.angularjs.org/guide/component) for a full list of options.
+`selector`: **(Required)** This is the selector string for the resulting component.
+
+---
+
+`template`: **(Optional)** Defines a template string for the component.
 
 ### `@RouteConfig`
 Used with `@Component` decorator to define the route config for a component.
@@ -71,17 +77,17 @@ Usage:
 import { Component, RouteConfig } from 'ng-decorated';
 
 @Component({
-	selector: 'myTest',
-	template: '<h1>Hello World!</h1>'
+  selector: 'myTest',
+  template: '<h1>Hello World!</h1>'
 })
 @RouteConfig([
-	{path: '/', name: 'Homepage', component: 'homepage', useAsDefault: true},
-	{path: '/users/...', name: 'Users', component: 'users'}
+  {path: '/', name: 'Homepage', component: 'homepage', useAsDefault: true},
+  {path: '/users/...', name: 'Users', component: 'users'}
 ])
 class MyTestComponent { }
 ```
 
-See [Angular docs for ComponentRouter docs](https://docs.angularjs.org/guide/component-router) for more details.
+> See [Angular docs for ComponentRouter docs](https://docs.angularjs.org/guide/component-router) for more details.
 
 ### `@Directive`
 Declares an angular directive with decorated class as its controller.
@@ -89,26 +95,142 @@ Declares an angular directive with decorated class as its controller.
 Usage:
 
 ```javascript
-import { Directive } from 'ng-decorated';
+import { Directive, @Inject } from 'ng-decorated';
 
 @Directive({
-	selector: '[my-attr]'
+  selector: '[my-attr]'
 })
+@Inject('$element')
 class MyAttrDirective {
-	link() {
-		
-	}
+  constructor($element) {
+    this.element = $element[0];
+  }
 }
 ```
 
 #### Directive Options
 
-Option  | Description
---------|------------
-selector | **(Required)** CSS selector to identify the HTML in the template that is associated with the directive. The CSS selector for an attribute is the attribute name in square brackets `[my-directive]` and the CSS selector for a class name is the class name prefixed with a dot `.my-directive`.
-restrict | **(Do not use)** The `restrict` option will be set automatically according to the selector type. 
 
-See [Angular docs for Directive docs](https://docs.angularjs.org/guide/directive) for more details.
+> See [Angular docs for Directive docs](https://docs.angularjs.org/guide/directive) for more details.
+
+---
+
+`selector`: **(Required)** CSS selector to identify the HTML in the template that is associated with the directive.  
+
+**Examples**
+
+* `[my-directive]`: Atributte directive (`restrict = 'A'`)
+* `.my-directive`: Class directive (`restrict = 'C'`)
+* `my-directive`: Element directive (`restrict = 'E'`) (PS: Consider using [`@Component`](#component))
+
+---
+
+`restrict`: **(Do not use)** This option will be set automatically according to the selector type. 
+
+---
+
+`scope`: **(Do not use)** Directives do not have isolated scopes. You need to declare your properties and use the specific decorators to define them:
+
+#### `@Input` [Angular docs](https://angular.io/docs/ts/latest/api/core/index/Input-var.html)
+Declares a data-bound input property.
+
+Angular automatically updates data-bound properties during change detection.
+
+`InputMetadata` takes an optional parameter that specifies the name used when instantiating a component in the template. When not provided, the name of the decorated property is used.
+
+Usage:
+
+```javascript
+import { Directive, Inject, Input } from 'ng-decorated';
+
+@Directive({ selector: 'my-dir' })
+@Inject('$element')
+class MyDirective {
+  constructor($element) {
+    this.el = $element[0];
+  }
+  
+  /**
+   * Markup example:
+   * <my-dir bg-color="$ctrl.bgColor"></my-dir>
+   */
+  @Input()
+  set bgColor(color) {
+    this.el.style.backgroundColor = color;
+  }
+
+  /**
+   * Markup example:
+   * <my-dir is-bold="true"></my-dir>
+   */
+  @Input('isBold')
+  set fontStyle(bold) {
+  	this.el.style.fontWeight = bold ? 'bold' : 'normal';
+  }
+}
+```
+
+#### `@Output` [Angular docs](https://angular.io/docs/ts/latest/api/core/index/Output-var.html)
+Declares an event-bound output property.
+
+When an output property emits an event, an event handler attached to that event the template is invoked.
+
+`OutputMetadata` takes an optional parameter that specifies the name used when instantiating a component in the template. When not provided, the name of the decorated property is used.
+
+Usage:
+
+```javascript
+import { Directive, Output, EventEmitter } from 'ng-decorated';
+
+@Directive({ selector: 'interval-dir' })
+class MyDirective {
+  /**
+   * Markup example:
+   * <interval-dir every-second="$ctrl.everySecond(param)"></interval-dir>
+   */
+  @Output() 
+  everySecond = new EventEmitter();
+
+  /**
+   * Markup example:
+   * <interval-dir every-five-seconds="$ctrl.everyFiveSecond(param1, param2)"></interval-dir>
+   */  
+  @Output('everyFiveSeconds') 
+  five5Secs = new EventEmitter();
+  
+  constructor() {
+    setInterval(() => this.everySecond.emit({ param: 'value' }), 1000);
+    setInterval(() => this.five5Secs.emit({ param1: 'value', param2: 'another value' }), 5000);
+  }  
+}
+```
+
+#### `@HostListener` [Angular docs](https://angular.io/docs/ts/latest/api/core/index/HostListener-var.html)
+Declares a host listener.
+
+Angular will invoke the decorated method when the host element emits the specified event.
+
+Usage:
+
+```javascript
+import { Directive, HostListener } from 'ng-decorated';
+
+@Directive({ selector: '[counting]' })
+class CountClicks {
+  numberOfClicks = 0;
+  
+  /**
+   * Markup example:
+   * <button counting>Increment</button>
+   */
+  @HostListener('click', ['$event.target'])
+  onClick(btn) {
+    console.log('button', btn, 'number of clicks:', this.numberOfClicks++);
+  }
+}
+```
+
+---
 
 ### `@Service`
 Registers a new angular service with the given name. 
@@ -119,16 +241,14 @@ Usage:
 import { Service } from 'ng-decorated';
 
 @Service({
-	name: 'myService'
+  name: 'myService'
 })
 class MyService { }
 ```
 
 #### Service Options
 
-Option  | Description
---------|------------
-name | **(Required)** This is the name of the registered service.
+`name`: **(Required)** This is the name of the registered service.
 
 ### `@Inject`
 Defines a list services to be injected to a constructor or method.
@@ -140,16 +260,16 @@ import { Inject } from 'ng-decorated';
 
 @Inject('$q', '$http')
 class ExampleService {
-	constructor($q, $http) {
-		// services are injected to class constructor
-	}
+  constructor($q, $http) {
+    // services are injected to class constructor
+  }
 }
 
 class AnotherService {
-	@Inject('$log')
-	static warnToConsole($log) {
-		// services can also be injected to a method
-	}
+  @Inject('$log')
+  static warnToConsole($log) {
+    // services can also be injected to a method
+  }
 }
 ```
 
@@ -162,10 +282,10 @@ Usage:
 import { Config } from 'ng-decorated';
 
 class AppConfig {
-	@Config()
-	static configSomething() {
-	
-	}
+  @Config()
+  static configSomething() {
+  
+  }
 }
 ```
 
@@ -179,12 +299,35 @@ Usage:
 import { Run } from 'ng-decorated';
 
 class AppRun {
-	@Run()
-	static runSomething() {
-	
-	}
+  @Run()
+  static runSomething() {
+  
+  }
 }
 ```
+
+### `@Pipe`
+Declare reusable pipe function. (Called filters in Angular 1.x)
+
+The class must declare the `transform` method.
+
+Usage:
+
+```javascript
+import { Pipe } from 'ng-decorated';
+
+@Pipe({ name: 'lowercase' })
+class Lowercase {
+  transform(value) { 
+    return v.toLowerCase(); 
+  }
+}
+```
+
+#### Pipe Options
+
+`name`: **(Required)** This is the name of the registered pipe.
+
 
 ## License
 
