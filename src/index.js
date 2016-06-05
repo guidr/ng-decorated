@@ -1,22 +1,17 @@
 'use strict';
 
-import { Component } from './decorators/component';
-import { Config } from './decorators/config';
-import { Directive } from './decorators/directive';
-import { Inject } from './decorators/inject';
-import { RouteConfig } from './decorators/route-config';
-import { Run } from './decorators/run';
-import { Service } from './decorators/service';
-
-export {
-    Component,
-    Config,
-    Directive,
-    Inject,
-    RouteConfig,
-    Run,
-    Service
-};
+export { Component } from './decorators/component';
+export { Config } from './decorators/config';
+export { Directive } from './decorators/directive';
+export { Input } from './decorators/input';
+export { Output } from './decorators/output';
+export { Inject } from './decorators/inject';
+export { RouteConfig } from './decorators/route-config';
+export { Run } from './decorators/run';
+export { Service } from './decorators/service';
+export { HostListener } from './decorators/host-listener';
+export { Pipe } from './decorators/pipe';
+export { EventEmitter } from './event-emitter';
 
 import { module } from './module';
 export default module.name;

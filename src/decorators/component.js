@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 import { module } from './../module';
@@ -8,14 +7,14 @@ export function Component (options) {
         options = options || {};
 
         if (!options.selector) {
-            throw new Error('@Component() must contains selector property!');
+            throw new Error('@Component() must contains `selector` property');
         }
 
         if (!target.$componentOptions) {
             target.$componentOptions = {};
         }
 
-        angular.extend(target.$componentOptions, options, {
+        Object.assign(target.$componentOptions, options, {
             controller : target
         });
 

@@ -2,28 +2,67 @@
 
 import { module } from './../module';
 
+function __dashCaseToCamelCase (string) {
+    return string.replace(/-([a-z])/ig, (all, letter) => letter.toUpperCase());
+}
+
+function __directiveInfo (selector) {
+    let directiveName = selector;
+    let restrict = 'E';
+
+    if (/^\[\S+\]$/.test(directiveName)) {
+        directiveName = directiveName.replace(/^\[(\S+)\]$/, '\$1');
+        restrict = 'A';
+    } else if (/^\.\S+$/.test(directiveName)) {
+        directiveName = directiveName.replace(/^\.(\S+)$/, '\$1');
+        restrict = 'C';
+    }
+
+    directiveName = __dashCaseToCamelCase(directiveName);
+
+    return { directiveName, restrict };
+}
+
 export function Directive (options) {
     return function decorator (target) {
-        let directiveName = options.selector;
-        let restrict = 'E';
+        const { directiveName, restrict } = __directiveInfo(options.selector);
 
-        if (/^\[\S+\]$/.test(directiveName)) {
-            directiveName = directiveName.replace(/^\[(\S+)\]$/, '\$1');
-            restrict = 'A';
-        } else if (/^\.\S+$/.test(directiveName)) {
-            directiveName = directiveName.replace(/^\.(\S+)$/, '\$1');
-            restrict = 'C';
-        }
+        module.config(['$compileProvider', ($compileProvider) => {
+            $compileProvider.directive(directiveName, [
+                '$injector',
+                function ($injector) {
+                    const definition = Object.assign(options, {
+                        restrict,
+                        scope : false,
+                        controller : function () { }, // we need to set it here, to be able to reasign later
+                        compile : function ($element, ...args) {
+                            const instance = $injector.instantiate(target, { $element });
 
-        directiveName = dashCaseToCamelCase(directiveName);
+                            if (target.controller) {
+                                definition.controller = [
+                                    ...$injector.annotate(target.controller),
+                                    function (...injected) {
+                                        target.controller.call(instance, ...injected);
+                                    }
+                                ];
+                            }
 
-        const instance = new target();
-        instance.restrict = restrict;
+                            if (instance.compile) {
+                                return instance.compile.apply(instance, [...args]);
+                            }
 
-        module.directive(directiveName, () => instance);
+                            return (...args) => {
+                                if (instance.link) {
+                                    instance.link.call(instance, ...args);
+                                }
+                            };
+                        }
+                    });
+
+                    return definition;
+                }
+            ]);
+        }]);
     }
 }
 
-function dashCaseToCamelCase(string) {
-    return string.replace(/-([a-z])/ig, (all, letter) => letter.toUpperCase());
-}

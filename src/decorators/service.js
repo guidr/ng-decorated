@@ -7,7 +7,7 @@ export function Service (options) {
         options = options || {};
 
         if (!options.name) {
-            throw new Error('@Service() must contains name property!');
+            throw new Error('@Service() must contains `name` property');
         }
 
         module.service(options.name, target);
