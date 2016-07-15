@@ -1,25 +1,27 @@
 'use strict';
 
 import { module } from './../module';
+import { Metastore } from './../metastore';
 
-export function Component (options) {
+export const Store = new Map();
+
+export function Component (options = {}) {
     return function decorator (target) {
-        options = options || {};
-
         if (!options.selector) {
             throw new Error('@Component() must contains `selector` property');
         }
 
-        if (!target.$componentOptions) {
-            target.$componentOptions = {};
-        }
-
-        Object.assign(target.$componentOptions, options, {
-            controller : target
+        let meta = Object.assign(Metastore.get(target), {
+            controller : target,
+            bindings : options.bindings,
+            template : options.template,
+            templateUrl : options.templateUrl
         });
 
+        Metastore.set(target, meta);
+
         module.config(['$compileProvider', ($compileProvider) => {
-            $compileProvider.component(target.$componentOptions.selector, target.$componentOptions);
+            $compileProvider.component(options.selector, Metastore.get(target));
         }]);
     };
 }

@@ -1,6 +1,5 @@
 'use strict';
 
-import { Inject } from './inject';
 import { __override } from './../helpers';
 
 const Decorators = new Map();

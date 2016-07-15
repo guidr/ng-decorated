@@ -1,5 +1,11 @@
 'use strict';
 
+// classes
+export { ElementRef } from './classes/element-ref';
+export { EventEmitter } from './classes/event-emitter';
+export { Provider, provide } from './classes/provider';
+
+// decorators
 export { Component } from './decorators/component';
 export { Config } from './decorators/config';
 export { Directive } from './decorators/directive';
@@ -11,7 +17,9 @@ export { Run } from './decorators/run';
 export { Service } from './decorators/service';
 export { HostListener } from './decorators/host-listener';
 export { Pipe } from './decorators/pipe';
-export { EventEmitter } from './event-emitter';
+
+// utils
+export { bootstrap } from './bootstrap';
 
 import { module } from './module';
 export default module.name;

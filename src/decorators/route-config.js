@@ -1,11 +1,14 @@
 'use strict';
 
+import { Metastore } from './../metastore';
+
 export function RouteConfig (options) {
     return function decorator (target) {
-        if (!target.$componentOptions) {
-            target.$componentOptions = {};
-        }
 
-        target.$componentOptions.$routeConfig = options;
+        let meta = Object.assign(Metastore.get(target), {
+            $routeConfig : options
+        });
+
+        Metastore.set(target, meta);
     }
 }

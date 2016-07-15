@@ -24,6 +24,9 @@
   "bugs": {
     "url": "https://github.com/guidr/ng-decorated/issues"
   },
+  "dependencies": {
+    "@angular/router": "^0.2.0"
+  },
   "devDependencies": {
     "babel-core": "^6.9.0",
     "babel-loader": "^6.2.4",

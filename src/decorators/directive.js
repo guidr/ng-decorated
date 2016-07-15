@@ -1,6 +1,7 @@
 'use strict';
 
 import { module } from './../module';
+import { ElementRef } from './../classes/element-ref';
 
 function __dashCaseToCamelCase (string) {
     return string.replace(/-([a-z])/ig, (all, letter) => letter.toUpperCase());
@@ -36,7 +37,10 @@ export function Directive (options) {
                         scope : false,
                         controller : function () { }, // we need to set it here, to be able to reasign later
                         compile : function ($element, ...args) {
-                            const instance = $injector.instantiate(target, { $element });
+                            const instance = $injector.instantiate(target, {
+                                // custom ElementRef class
+                                $element : new ElementRef($element)
+                            });
 
                             if (target.controller) {
                                 definition.controller = [
@@ -65,4 +69,3 @@ export function Directive (options) {
         }]);
     }
 }
-

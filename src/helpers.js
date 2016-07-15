@@ -20,7 +20,7 @@ export function __override (object, method, fn) {
             fn.call(this, ...args);
         }
 
-        originalFn.apply(this, parameters);
+        return originalFn.apply(this, parameters);
     }
 
     object[method] = Replacement;
