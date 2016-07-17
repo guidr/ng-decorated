@@ -1,6 +1,11 @@
 # ng-decorated
-Set of ES6 decorators to write Angular 2 style code in AngularJS 1.5. 
+Set of ES6 decorators to write Angular 2 style code in AngularJS 1.5.
 
+TODO:
+@Component
+  HostListener
+  Input
+  Output
 
 [![NPM](https://nodei.co/npm/ng-decorated.png)](https://nodei.co/npm/ng-decorated/)
 
@@ -60,7 +65,7 @@ class MyTestComponent { }
 #### Component Options
 > See [Angular docs for Component](https://docs.angularjs.org/guide/component) for a full list of options.
 
---- 
+---
 
 `selector`: **(Required)** This is the selector string for the resulting component.
 
@@ -115,7 +120,7 @@ class MyAttrDirective {
 
 ---
 
-`selector`: **(Required)** CSS selector to identify the HTML in the template that is associated with the directive.  
+`selector`: **(Required)** CSS selector to identify the HTML in the template that is associated with the directive.
 
 **Examples**
 
@@ -125,7 +130,7 @@ class MyAttrDirective {
 
 ---
 
-`restrict`: **(Do not use)** This option will be set automatically according to the selector type. 
+`restrict`: **(Do not use)** This option will be set automatically according to the selector type.
 
 ---
 
@@ -149,7 +154,7 @@ class MyDirective {
   constructor($element) {
     this.el = $element[0];
   }
-  
+
   /**
    * Markup example:
    * <my-dir bg-color="$ctrl.bgColor"></my-dir>
@@ -188,20 +193,20 @@ class MyDirective {
    * Markup example:
    * <interval-dir every-second="$ctrl.everySecond(param)"></interval-dir>
    */
-  @Output() 
+  @Output()
   everySecond = new EventEmitter();
 
   /**
    * Markup example:
    * <interval-dir every-five-seconds="$ctrl.everyFiveSecond(param1, param2)"></interval-dir>
-   */  
-  @Output('everyFiveSeconds') 
+   */
+  @Output('everyFiveSeconds')
   five5Secs = new EventEmitter();
-  
+
   constructor() {
     setInterval(() => this.everySecond.emit({ param: 'value' }), 1000);
     setInterval(() => this.five5Secs.emit({ param1: 'value', param2: 'another value' }), 5000);
-  }  
+  }
 }
 ```
 
@@ -218,7 +223,7 @@ import { Directive, HostListener } from 'ng-decorated';
 @Directive({ selector: '[counting]' })
 class CountClicks {
   numberOfClicks = 0;
-  
+
   /**
    * Markup example:
    * <button counting>Increment</button>
@@ -233,7 +238,7 @@ class CountClicks {
 ---
 
 ### `@Service`
-Registers a new angular service with the given name. 
+Registers a new angular service with the given name.
 
 Usage:
 
@@ -284,7 +289,7 @@ import { Config } from 'ng-decorated';
 class AppConfig {
   @Config()
   static configSomething() {
-  
+
   }
 }
 ```
@@ -301,7 +306,7 @@ import { Run } from 'ng-decorated';
 class AppRun {
   @Run()
   static runSomething() {
-  
+
   }
 }
 ```
@@ -318,8 +323,8 @@ import { Pipe } from 'ng-decorated';
 
 @Pipe({ name: 'lowercase' })
 class Lowercase {
-  transform(value) { 
-    return v.toLowerCase(); 
+  transform(value) {
+    return v.toLowerCase();
   }
 }
 ```

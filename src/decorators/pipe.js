@@ -2,10 +2,8 @@
 
 import { module } from './../module';
 
-export function Pipe (options) {
+export function Pipe (options = {}) {
     return function decorator (target, key, descriptor) {
-        options = options || {};
-
         if (!options.name) {
             throw new Error('@Pipe() must contains `name` property');
         }

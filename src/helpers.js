@@ -25,3 +25,9 @@ export function __override (object, method, fn) {
 
     object[method] = Replacement;
 }
+
+export function __getName(fn) {
+    var funcNameRegex = /function\s([^(]{1,})\(/;
+    var results = (funcNameRegex).exec((fn).toString());
+    return (results && results.length > 1) ? results[1].trim() : "";
+}

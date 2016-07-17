@@ -1,14 +1,14 @@
 'use strict';
 
-import { Metastore } from './../metastore';
+import { ComponentStore } from './component';
+import { __getName } from './../helpers';
 
 export function RouteConfig (options) {
     return function decorator (target) {
-
-        let meta = Object.assign(Metastore.get(target), {
-            $routeConfig : options
-        });
-
-        Metastore.set(target, meta);
+        ComponentStore
+            .get(__getName(target))
+            .assign({
+                $routeConfig : options
+            });
     }
 }

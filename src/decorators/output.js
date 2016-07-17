@@ -18,6 +18,8 @@ export function Output (alias) {
 
                 listeners.forEach(({ name, property }) => {
                     const handler = (args) => {
+                        // TODO: needs to find a way to send the parameters as variables and not as an object
+                        // emitter.emit($val1, $val2) and not emitter.emit({$val1: 1, $val2: 2})
                         const fn = $parse($attrs[name]);
                         fn($scope, args);
                     };
