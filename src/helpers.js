@@ -31,3 +31,16 @@ export function __getName(fn) {
     var results = (funcNameRegex).exec((fn).toString());
     return (results && results.length > 1) ? results[1].trim() : "";
 }
+
+const DASH_TO_CAMEL_CASE_PATTERN = /-([a-z])/ig;
+
+/**
+ * Converts dash-case to camelCase
+ * @param value
+ * @returns {*}
+ */
+export function dashToCamelCase(value) {
+    return value.replace(DASH_TO_CAMEL_CASE_PATTERN, (all, match) => {
+        return match.toUpperCase();
+    });
+}
