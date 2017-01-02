@@ -1,13 +1,16 @@
 'use strict';
 
 import { module } from './../module';
-import { __getName } from './../helpers';
+import { __getName, dashToCamelCase } from './../helpers';
 
 export function Component (options = {}) {
     return function decorator (target) {
         if (!options.selector) {
             throw new Error('@Component() must contains `selector` property');
         }
+        
+        // convert to camelCase in case selector is in kebab-case
+        const selector = options.selector.indexOf('-') > -1 ? dashToCamelCase(options.selector) : options.selector;
 
         /**
          * Watch for changes on bindings and set the value to the correct
@@ -47,7 +50,7 @@ export function Component (options = {}) {
                 });
             }
 
-            $compileProvider.component(options.selector, meta);
+            $compileProvider.component(selector, meta);
         }]);
     };
 }
@@ -85,5 +88,3 @@ export class ComponentStore {
         return cmp;
     }
 }
-
-
