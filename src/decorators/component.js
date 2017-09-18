@@ -1,14 +1,14 @@
 'use strict';
 
 import { module } from './../module';
-import { __getName, dashToCamelCase } from './../helpers';
+import { __getName, __override, dashToCamelCase } from './../helpers';
 
 export function Component (options = {}) {
     return function decorator (target) {
         if (!options.selector) {
             throw new Error('@Component() must contains `selector` property');
         }
-        
+
         // convert to camelCase in case selector is in kebab-case
         const selector = options.selector.indexOf('-') > -1 ? dashToCamelCase(options.selector) : options.selector;
 
@@ -17,11 +17,8 @@ export function Component (options = {}) {
          * class property in case the user sets an alias for the binding.
          *
          * E.g. @Input('myAlias') myProperty;
-         *
-         * TODO: override in case user has implemented $onChanges
-         *       use __override helper
          */
-        target.prototype.$onChanges = function (obj) {
+        __override(target.prototype, '$onChanges', function (obj) {
             const meta = ComponentStore.get(__getName(target));
             if (meta.inputs) {
                 meta.inputs.forEach(({ name, property }) => {
@@ -30,7 +27,7 @@ export function Component (options = {}) {
                     }
                 });
             }
-        }
+        });
 
         ComponentStore
             .get(__getName(target))
