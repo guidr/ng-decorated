@@ -1,6 +1,6 @@
 {
   "name": "ng-decorated",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ES6 decorators for Angular 1.5",
   "main": "lib/index.js",
   "scripts": {
